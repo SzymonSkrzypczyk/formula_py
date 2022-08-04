@@ -1,13 +1,14 @@
-from dataclasses import dataclass, field
-from json import dumps
-from pickle import dumps as p_dumps
-from yaml import dump
-import requests
-from bs4 import BeautifulSoup
+"""
+Main module of the package. Contains all essentials classes and functionalities
+"""
+CURRENT_YEAR = 2022
+FIRST_YEAR = 1950
+FIRST_YEAR_CONSTRUCTOR = 1958
 
 
 @dataclass()
 class Driver:
+    """It's a class representing a driver"""
     position: int
     name: str
     country: str
@@ -45,6 +46,7 @@ class Driver:
 
 @dataclass()
 class Team:
+    """It's a class representing a team"""
     position: int
     name: str
     points: int
@@ -79,6 +81,7 @@ class Team:
 
 @dataclass()
 class LapTime:
+    """It's a class representing a laptime of a given GP"""
     race: str
     driver: str
     racing_team: str
@@ -117,10 +120,11 @@ class LapTime:
 
 
 class F1:
+    """Basic class of the whole project"""
     def __init__(self):
         self._current_drivers = self._get_current()
-        self._current_teams = self.get_teams(2021)
-        self._current_laps = self.get_fastest_laps(2021)
+        self._current_teams = self.get_teams(CURRENT_YEAR)
+        self._current_laps = self.get_fastest_laps(CURRENT_YEAR)
 
     @staticmethod
     def _get_current():
@@ -142,7 +146,7 @@ class F1:
 
     @staticmethod
     def get_drivers_by_year(year):
-        if year > 2021 or year < 1950:
+        if year > CURRENT_YEAR or year < FIRST_YEAR:
             raise ValueError('You have to enter a correct value')
         r = requests.get(f'https://www.formula1.com/en/results.html/{year}/drivers.html')
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -164,7 +168,7 @@ class F1:
 
     @staticmethod
     def get_teams(year):
-        if year > 2021 or year < 1958:
+        if year > CURRENT_YEAR or year < FIRST_YEAR_CONSTRUCTOR:
             raise ValueError('You have to enter a correct value')
         r = requests.get(f'https://www.formula1.com/en/results.html/{year}/team.html')
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -183,7 +187,7 @@ class F1:
 
     @staticmethod
     def get_fastest_laps(year):
-        if year > 2021 or year < 1950:
+        if year > CURRENT_YEAR or year < FIRST_YEAR:
             raise ValueError('You have to enter a correct value')
         r = requests.get(f'https://www.formula1.com/en/results.html/{year}/fastest-laps.html')
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -223,5 +227,4 @@ class F1:
 
 if __name__ == '__main__':
     f1 = F1()
-    lap1 = f1.drivers_standings
-    print(getattr(lap1[0], 'as_dict')())
+    print(f1.get_teams(2022))
